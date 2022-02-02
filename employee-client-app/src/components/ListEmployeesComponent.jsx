@@ -1,15 +1,26 @@
 import React, {Component} from 'react';
+import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import EmployeeService from '../services/EmployeeService';
 
-class ListEmployeesComponent extends Component {
+//Make props available in the route so that id can be extracted from params
+export function withRouter (Children) {
+  return (props) => {
+    const navigate = useNavigate();
+    return <Children {...props} navigate={navigate} />;
+  }
+};
 
+class ListEmployeesComponent extends Component {
 
   constructor(props) {
     super(props)
 
     this.state = {
-        employees: []
+        employees:[]
     };
+
+    this.addEmployee = this.addEmployee.bind(this);
   }
 
   componentDidMount() {
@@ -18,10 +29,23 @@ class ListEmployeesComponent extends Component {
     });
   }
 
+  addEmployee() {
+    console.log(this.props);
+    this.props.navigate('/add-employee');
+
+  }
+
   render() {
     return (
       <div>
         <h1 className="text-center">Employee List</h1>
+        <div>
+          <button
+            className="btn btn-primary"
+            onClick={this.addEmployee}>
+            Add Employee
+          </button>
+        </div>
         <div className="row">
           <table className="table table-striped table-bordered">
 
@@ -46,12 +70,12 @@ class ListEmployeesComponent extends Component {
                     </tr>
                 )
               }
-
             </tbody>
+
           </table>
         </div>
       </div>
     );
   }
 }
-export default ListEmployeesComponent
+export default withRouter(ListEmployeesComponent)
